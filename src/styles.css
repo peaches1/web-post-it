@@ -1,0 +1,73 @@
+.web-post-it {
+    position: absolute;
+    background: #ffd700;
+    padding: 10px;
+    border-radius: 2px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    min-width: 200px;
+    min-height: 100px;
+    z-index: 10000;
+    resize: both;
+    overflow: hidden;
+    cursor: move;
+}
+
+/* Add specific cursor for resize handle */
+.web-post-it::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 15px;
+    height: 15px;
+    cursor: nwse-resize;
+}
+
+.web-post-it textarea {
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    border: none;
+    background: transparent;
+    resize: none;
+    font-family: inherit;
+    margin: 10px;
+    overflow-y: auto; /* Show vertical scrollbar only when needed */
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+    cursor: text; /* Reset cursor for textarea */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.web-post-it textarea::-webkit-scrollbar {
+    width: 8px;
+}
+
+.web-post-it textarea::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.web-post-it textarea::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+}
+
+/* Only show scrollbar when hovering over textarea */
+.web-post-it textarea::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,0,0,0.3);
+}
+
+.web-post-it-close {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0 5px;
+}
+
+.web-post-it-close:hover {
+    background: rgba(0,0,0,0.1);
+    border-radius: 50%;
+}
