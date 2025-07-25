@@ -10,6 +10,7 @@ const fontSizeValue = document.getElementById('fontSizeValue');
 const showFirstLineAsTitle = document.getElementById('showFirstLineAsTitle');
 const saveStatus = document.getElementById('saveStatus');
 const versionInfo = document.getElementById('versionInfo');
+const viewAllNotesBtn = document.getElementById('viewAllNotesBtn');
 
 // Load version from manifest
 const manifest = chrome.runtime.getManifest();
@@ -31,6 +32,13 @@ fontSizeSlider.addEventListener('input', function() {
 
 // Save settings when checkbox changes
 showFirstLineAsTitle.addEventListener('change', saveSettings);
+
+// Handle View All Notes button click
+viewAllNotesBtn.addEventListener('click', function() {
+    chrome.tabs.create({
+        url: chrome.runtime.getURL('notes-list.html')
+    });
+});
 
 function saveSettings() {
     const settings = {
