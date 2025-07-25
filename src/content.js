@@ -38,6 +38,12 @@ function updateGlobalStyles() {
         .web-post-it textarea {
             font-size: ${settings.fontSize}px !important;
         }
+        .web-post-it-header {
+            font-size: ${settings.fontSize}px !important;
+        }
+        .web-post-it-header-text {
+            font-size: ${settings.fontSize}px !important;
+        }
     `;
 }
 
