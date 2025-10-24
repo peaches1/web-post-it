@@ -1,5 +1,74 @@
 let postIts = {};
 const currentUrl = window.location.origin + window.location.pathname;
+let extensionInvalidated = false;
+
+// Global error handler for extension context errors
+window.addEventListener('error', function(event) {
+    if (event.error && event.error.message && event.error.message.includes('Extension context invalidated')) {
+        console.log('Caught extension context error, flagging as invalidated');
+        extensionInvalidated = true;
+        event.preventDefault(); // Prevent the error from appearing in console
+        return true;
+    }
+});
+
+// Also handle unhandled promise rejections
+window.addEventListener('unhandledrejection', function(event) {
+    if (event.reason && event.reason.message && event.reason.message.includes('Extension context invalidated')) {
+        console.log('Caught extension context promise rejection, flagging as invalidated');
+        extensionInvalidated = true;
+        event.preventDefault();
+        return true;
+    }
+});
+
+// Safe Chrome API wrapper
+function safeChrome(callback) {
+    // If we've already detected invalidation, don't try again
+    if (extensionInvalidated) {
+        return false;
+    }
+    
+    try {
+        // Check if chrome object exists and has runtime
+        if (typeof chrome === 'undefined' || !chrome.runtime) {
+            console.log('Chrome API not available');
+            extensionInvalidated = true;
+            return false;
+        }
+        
+        // Try to access chrome.runtime.id - this is where the error typically occurs
+        const runtimeId = chrome.runtime.id;
+        if (!runtimeId) {
+            console.log('Extension context invalidated - no runtime ID');
+            extensionInvalidated = true;
+            return false;
+        }
+        
+        return callback();
+    } catch (error) {
+        console.log('Chrome API error caught:', error.message);
+        extensionInvalidated = true;
+        return false;
+    }
+}
+
+// Global extension context checker
+function isExtensionContextValid() {
+    return safeChrome(() => true) || false;
+}
+
+// Debounced save to prevent rapid calls
+let saveTimeout;
+function debouncedSavePostIts() {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+        safeChrome(() => {
+            savePostIts();
+            return true;
+        });
+    }, 300);
+}
 
 // Default settings
 let settings = {
@@ -8,18 +77,34 @@ let settings = {
 };
 
 // Load settings
-chrome.storage.sync.get(settings, function(savedSettings) {
-    settings = savedSettings;
-    updateGlobalStyles();
+safeChrome(() => {
+    chrome.storage.sync.get(settings, function(savedSettings) {
+        safeChrome(() => {
+            if (chrome.runtime.lastError) {
+                console.error('Settings load error:', chrome.runtime.lastError);
+                return true;
+            }
+            settings = savedSettings;
+            updateGlobalStyles();
+            return true;
+        });
+    });
+    return true;
 });
 
 // Listen for settings updates from popup
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.action === 'updateSettings') {
-        settings = request.settings;
-        updateGlobalStyles();
-        updateAllNotes();
-    }
+safeChrome(() => {
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        safeChrome(() => {
+            if (request.action === 'updateSettings') {
+                settings = request.settings;
+                updateGlobalStyles();
+                updateAllNotes();
+            }
+            return true;
+        });
+    });
+    return true;
 });
 
 // Update global CSS styles based on settings
@@ -190,7 +275,7 @@ function createPostIt(x, y, text = '', width = '200px', height = '100px', collap
         
         if (postIt.id) {
             postIts[postIt.id].text = textarea.value;
-            savePostIts();
+            debouncedSavePostIts();
         }
     };
     
@@ -205,7 +290,7 @@ function createPostIt(x, y, text = '', width = '200px', height = '100px', collap
         
         if (postIt.id) {
             postIts[postIt.id].collapsed = !isCollapsed;
-            savePostIts();
+            debouncedSavePostIts();
         }
     };
     
@@ -256,7 +341,7 @@ function createPostIt(x, y, text = '', width = '200px', height = '100px', collap
             if (postIt.id && postIts[postIt.id]) {
                 postIts[postIt.id].x = currentX;
                 postIts[postIt.id].y = currentY;
-                savePostIts();
+                debouncedSavePostIts();
             }
         }
     });
@@ -272,7 +357,7 @@ function createPostIt(x, y, text = '', width = '200px', height = '100px', collap
             const { width, height } = entries[0].contentRect;
             postIts[postIt.id].width = `${width}px`;
             postIts[postIt.id].height = `${height}px`;
-            savePostIts();
+            debouncedSavePostIts();
         }
     });
     
@@ -287,26 +372,50 @@ function createPostIt(x, y, text = '', width = '200px', height = '100px', collap
 
 function loadPostIts() {
     console.log('Loading notes for:', currentUrl);
-    chrome.storage.local.get(null, function(result) {
-        if (result.postIts && result.postIts[currentUrl]) {
-            clearExistingNotes(); // Clear existing notes first
-            postIts = result.postIts[currentUrl];
-            displaySavedPostIts();
-        }
+    
+    safeChrome(() => {
+        chrome.storage.local.get(null, function(result) {
+            safeChrome(() => {
+                if (chrome.runtime.lastError) {
+                    console.error('Load error:', chrome.runtime.lastError);
+                    return true;
+                }
+                if (result.postIts && result.postIts[currentUrl]) {
+                    clearExistingNotes(); // Clear existing notes first
+                    postIts = result.postIts[currentUrl];
+                    displaySavedPostIts();
+                }
+                return true;
+            });
+        });
+        return true;
     });
 }
 
 function savePostIts() {
-    chrome.storage.local.get(null, function(result) {
-        let allPostIts = result.postIts || {};
-        allPostIts[currentUrl] = postIts;
-        chrome.storage.local.set({ postIts: allPostIts }, function() {
-            if (chrome.runtime.lastError) {
-                console.error('Save error:', chrome.runtime.lastError);
-            } else {
-                console.log('Notes saved:', allPostIts);
-            }
+    safeChrome(() => {
+        chrome.storage.local.get(null, function(result) {
+            safeChrome(() => {
+                if (chrome.runtime.lastError) {
+                    console.error('Save error:', chrome.runtime.lastError);
+                    return true;
+                }
+                let allPostIts = result.postIts || {};
+                allPostIts[currentUrl] = postIts;
+                chrome.storage.local.set({ postIts: allPostIts }, function() {
+                    safeChrome(() => {
+                        if (chrome.runtime.lastError) {
+                            console.error('Save error:', chrome.runtime.lastError);
+                        } else {
+                            console.log('Notes saved:', allPostIts);
+                        }
+                        return true;
+                    });
+                });
+                return true;
+            });
         });
+        return true;
     });
 }
 
@@ -326,13 +435,28 @@ function displaySavedPostIts() {
     });
 }
 
-// Event Listeners
-window.addEventListener('load', loadPostIts);
-document.addEventListener('DOMContentLoaded', loadPostIts);
+// Retry loading notes with a delay if extension context is not available
+function loadPostItsWithRetry(retryCount = 0) {
+    const contextValid = safeChrome(() => {
+        loadPostIts();
+        return true;
+    });
+    
+    if (!contextValid && retryCount < 5) {
+        console.log(`Extension context not ready, retrying in ${(retryCount + 1) * 500}ms...`);
+        setTimeout(() => loadPostItsWithRetry(retryCount + 1), (retryCount + 1) * 500);
+    } else if (!contextValid) {
+        console.log('Extension context failed to initialize after multiple retries');
+    }
+}
 
-// Create note on Ctrl + Right Click
+// Event Listeners
+window.addEventListener('load', loadPostItsWithRetry);
+document.addEventListener('DOMContentLoaded', loadPostItsWithRetry);
+
+// Create note on Ctrl + Right Click (Windows/Linux) or Cmd + Right Click (macOS)
 document.addEventListener('mouseup', function(e) {
-    if (e.button !== 2 || !e.ctrlKey) return;
+    if (e.button !== 2 || !(e.ctrlKey || e.metaKey)) return;
     if (e.target.classList.contains('web-post-it')) return;
     
     e.preventDefault();
@@ -357,7 +481,7 @@ document.addEventListener('mouseup', function(e) {
 
 // Prevent context menu when creating a note
 document.addEventListener('contextmenu', function(e) {
-    if (e.ctrlKey) {
+    if (e.ctrlKey || e.metaKey) {
         e.preventDefault();
     }
 });
