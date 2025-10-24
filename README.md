@@ -1,61 +1,117 @@
-# web-post-it
-Add Post-it notes to any element on a website.
+# Web Post-it Notes
 
-## Version 0.9.2 (July 26, 2025) 
+A browser extension that allows you to add sticky notes to any website. Create, edit, and manage notes that persist across browser sessions and sync across your devices.
 
-### "Notes Management System" added
-- **Dedicated Notes Page**: Accessible via "View All Notes" button in popup.
-- **Domain-Based Organization**: Notes grouped by website domain, without the www. prefix.
-- **Advanced Filtering**: Search by content/title/URL, sort by date/title/URL, filter by recent/older.
-- **Statistics Dashboard**: Real-time display of total notes, unique websites, and recent activity.
-- **Professional Layout**: Responsive grid design with domain sections and note counts.
+## 🚀 How to Use
 
-### Notes Management System: Enhanced Visual Experience
-- **Smooth Delete Animation**: Elegant fade-out animation when deleting notes.
-- **Improved URL Display**: Full URL path shown without query parameters.
-- **Font Synchronization**: Note cards match font size configured in popup settings.
-- **Professional Footer**: Branded footer with extension name, version info, and company attribution.
-- **Domain Sections**: Visual organization with domain headers, note counts, and globe icons.
+### Creating Notes
+- **Windows/Linux**: `Ctrl` + Right Click on any webpage element
+- **macOS**: `Cmd` + Right Click on any webpage element
 
-### Notes Management System: Technical Enhancements
-- **CSP Compliance**: Removed inline event handlers for security.
-- **Event Delegation**: Efficient event handling for dynamic content.
-- **Storage Optimization**: Dual storage system (local and sync).
-- **Error Handling**: User-friendly messages and retry options.
-- **Performance**: Optimized loading and rendering for large note collections.
+### Managing Notes
+- **Edit**: Click on any note to start typing
+- **Move**: Drag notes by their header to reposition
+- **Resize**: Drag the bottom-right corner to resize
+- **Collapse/Expand**: Double-click the header or click the toggle button
+- **Delete**: Click the ✖ button in the top-right corner
+- **View All**: Click the extension icon → "View All Notes" button
 
-### Notes: UI Enhancements
-- **Collapsible Headers**: Clickable headers showing the first line of each note.
-- **Interactive Toggle**: Double-click headers or click arrows to collapse/expand notes.
-- **Compact Design**: Smaller headers with better visual hierarchy.
-- **Color Scheme**: Yellow headers with lighter cream content areas.
-- **Typography**: Reduced font sizes, tighter line spacing, improved readability.
+## ⚙️ Settings
 
-### Notes: Extension Settings
-- **Settings Popup**: Professional interface accessible via extension icon.
-- **Font Size Control**: Adjustable font size (8px-20px) with live preview.
-- **Header Options**: Toggle to show/hide first line as header title.
-- **Auto-save**: Settings automatically saved and applied.
-- **Branding**: Added Gravity Global AG footer with version info.
+Access settings by clicking the extension icon in your browser toolbar:
 
-### Notes: Technical Improvements
-- **Persistent State**: Collapsed/expanded state saved per note.
-- **Dynamic Updates**: Settings apply immediately without page reload.
-- **CSS Optimization**: Removed text borders, improved focus states.
-- **Site Compatibility**: Enhanced CSS specificity for better site compatibility.
-- **Event Handling**: Improved interaction handling and focus prevention.
+- **Font Size**: Adjust note text size (8px-20px)
+- **Header Display**: Toggle showing the first line as note title
+- **View All Notes**: Open the notes management page
 
-### Notes: User Experience
-- **Seamless Integration**: Notes blend naturally into web pages.
-- **Professional Appearance**: Clean, modern design with consistent spacing.
-- **Accessibility**: Proper keyboard navigation and screen reader support.
-- **Cross-site Compatibility**: Works reliably across different websites.
+## 📋 Features
 
-### Notes: Interface Features
-- **Header Text**: Shows first line of note content as title (configurable).
-- **Visual States**: Clear indicators for expanded/collapsed states.
-- **Hover Effects**: Subtle visual feedback on interactive elements.
-- **Smooth Transitions**: Animated expand/collapse with CSS transitions.
+- 📌 **Persistent Notes**: Notes are saved automatically and persist across browser sessions
+- 🌐 **Cross-Site**: Notes are organized by website domain
+- 🔄 **Sync**: Notes sync across devices (when browser sync is enabled)
+- 📱 **Responsive**: Works on desktop and mobile browsers
+- 🎨 **Customizable**: Adjustable font sizes and display options
+- 🔍 **Search**: Find notes quickly in the management interface
 
-### Icon Design Files
+## 🆕 Version 0.9.7 (October 24, 2025)
+
+### Latest Updates
+- **🛡️ Complete Error Elimination**: Completely resolved "Extension context invalidated" errors
+- **🍎 macOS Support**: Full Cmd+Right Click functionality for Mac users
+- **⚡ Performance Optimization**: Debounced saves and intelligent error handling
+- **📖 User Instructions**: Clear instructions in popup for both Mac and Windows
+- **� Robust Context Handling**: Advanced extension context validation and recovery
+- **� Silent Failure**: Graceful degradation when extension context is lost## 🔧 Installation
+
+### For Developers
+1. Clone this repository
+2. Open your browser's extension management page
+3. Enable "Developer mode"
+4. Click "Load unpacked" and select the `src` folder
+5. The extension is now installed and ready to use
+
+### From Store
+*Coming soon to browser extension stores*
+
+## 🎨 Technical Features
+
+- **🖱️ Cross-Platform Shortcuts**: Supports both Ctrl (Windows/Linux) and Cmd (macOS) modifiers
+- **🛡️ Error-Proof Architecture**: Complete protection against extension context invalidation
+- **🔄 Smart Recovery**: Automatic retry mechanisms with context validation
+- **📱 SPA Compatibility**: Optimized for Single Page Applications (Outlook, Gmail, Teams, etc.)
+- **💾 Intelligent Storage**: Debounced saves with Chrome storage API synchronization
+- **🔒 CSP Compliant**: Follows Content Security Policy best practices
+- **⚡ Performance Optimized**: Minimal impact on webpage loading and performance
+- **🚫 Silent Failure**: Graceful degradation when extension updates occur
+
+## 🌐 Browser Compatibility
+
+- ✅ **Chrome** (Chromium-based browsers) - Fully tested
+- ✅ **Microsoft Edge** - Fully tested and optimized
+- ✅ **Brave** - Compatible
+- ✅ **Opera** - Compatible
+- ⚠️ **Firefox** (Requires manifest v2 adaptation)
+- ❌ **Safari** (Not supported)
+
+## 🧪 Tested Environments
+
+- ✅ **Outlook Web App** - Calendar, Mail, Teams integration
+- ✅ **Gmail** - Full compatibility
+- ✅ **Static Websites** - Perfect integration
+- ✅ **Dynamic SPAs** - React, Angular, Vue applications
+- ✅ **Corporate Portals** - Tested with enterprise applications
+
+## 🔧 Troubleshooting
+
+### Notes Not Appearing?
+1. **Reload the extension**: Go to `edge://extensions/` and click reload
+2. **Check permissions**: Ensure the extension has access to the website
+3. **Clear cache**: Sometimes clearing browser cache helps
+4. **Try incognito**: Test if the issue persists in incognito mode
+
+### Creating Notes Not Working?
+- **macOS**: Use `Cmd` + Right Click (not Ctrl)
+- **Windows/Linux**: Use `Ctrl` + Right Click
+- **Check console**: Open DevTools to see if there are any errors
+- **Page reload**: Try refreshing the page and creating a note again
+
+### Performance Issues?
+- The extension uses debounced saves to minimize performance impact
+- Notes are stored locally and sync across devices automatically
+- Minimal memory footprint with intelligent context management
+
+## 🤝 Contributing
+
+Feel free to submit issues, feature requests, or pull requests to improve the extension.
+
+## 📄 License
+
+This project is open source. Please check the license file for details.
+
+## 🎨 Design Resources
+
 [Icon Design Files](https://lun-eu.icons8.com/d/wwpxphdKb0GK5vvRt4oJEg?node=A3w5tuEre0ul8cAhOeefLg)
+
+---
+
+**Made by [Gravity Global AG](https://gravity.global/) © 2025**
